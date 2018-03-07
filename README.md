@@ -1,0 +1,2 @@
+# blogResource
+Blog MD file
