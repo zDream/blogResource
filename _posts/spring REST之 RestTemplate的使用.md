@@ -3,7 +3,7 @@ date: 3/8/2018 11:28:23 AM
 tags: 框架
 ---
 
-##一. 基础知识
+## 一. 基础知识 ##
 
 REST就是将资源的状态以最适合客户端或服务端的形式从服务器端转移到客户端（或者反过来）
 
@@ -14,7 +14,7 @@ REST就是将资源的状态以最适合客户端或服务端的形式从服务�
  - Update: PUT或PATCH
  - Delete： Delete
 
-##二. 基本使用
+## 二. 基本使用 ##
 
 在RestTemplate提供了对应于每个的六个主要的HTTP方法
 
@@ -35,7 +35,7 @@ RestTemplate定义了36个与REST资源交互的方法，其中的大多数都�
  - postForLocation() POST 数据到一个URL，返回新创建资源的URL
  - put() PUT 资源到特定的URL
 
-## Rest服务,模拟提供Rest数据
+## Rest服务,模拟提供Rest数据 ##
 
 	@RestController
 	public class DataController {
@@ -65,9 +65,9 @@ RestTemplate定义了36个与REST资源交互的方法，其中的大多数都�
 	    }
 	}
 
-## 1. GET请求
+## 1. GET请求 ##
 
-### (1)getForEntity使用方法
+### (1)getForEntity使用方法 ###
 
 无参数的getForEntity
 
@@ -101,7 +101,7 @@ RestTemplate定义了36个与REST资源交互的方法，其中的大多数都�
 > 但是,通常情况下我们并不想要Http请求的全部信息,只需要相应体即可.对于这种情况,RestTemplate提供了 getForObject() 方法用来只获取 响应体信息.  
 > getForObject 和 getForEntity 用法几乎相同,指示返回值返回的是 响应体,省去了我们 再去 getBody() 
 
-### (2)getForObject使用方法
+### (2)getForObject使用方法  ###
 
 无参数的getForEntity
  	
@@ -122,7 +122,7 @@ RestTemplate定义了36个与REST资源交互的方法，其中的大多数都�
         return userEntity;
     }
 
-## 2. Post请求
+## 2. Post请求 ##
 
 post 请求,提交 UserEntity 对像
 
@@ -146,7 +146,7 @@ post 请求,提交 UserEntity 对像
 
 以上get 和post 两个 请求基本上可以满足我们的大部分需求,如果不满足可以使用 **exchange()**或者 **execute()** 来实现,通过看源代码,可以发现,getForEntity() 和postForEntity()是对这两个方法的封装.
 
-## 三. 手动指定转换器(HttpMessageConverter)
+## 三. 手动指定转换器(HttpMessageConverter) ##
 
 我们知道 ,reseful接口传递的数据内容和响应都是json格式的字符串.而postForObject方法请求和返回的参数都是java类,是RestTemplate通过HttpMessageConverter帮我们做了转换的操作.
 
