@@ -1,0 +1,131 @@
+title: （二）java集合源码解析
+date: 3/13/2018 11:01:59 AM  
+tags: java
+---
+
+## 一、ArrayList数据结构 ##
+
+分析一个类的时候，数据结构往往是它的灵魂所在，理解底层的数据结构其实就理解了该类的实现思路，具体的实现细节再具体分析。
+
+　　ArrayList的数据结构如下：
+
+	 1 2 3 4 5 6 7 8 
+	| | | | | | | | |
+
+说明：底层的数据结构就是数组，数组元素类型为Object类型，即可以存放所有类型数据。我们对ArrayList类的实例的所有的操作底层都是基于数组的。下面我们来分析通过数组是如何保证库函数的正确实现的。
+
+## 二、ArrayList源码分析 ##
+
+### 2.1 类的继承关系 ###
+
+	public class ArrayList<E> extends AbstractList<E> 
+	implements List<E>, RandomAccess, Cloneable, java.io.Serializable
+
+说明：ArrayList继承AbstractList抽象父类，实现了List接口（规定了List的操作规范）、RandomAccess（可随机访问）、Cloneable（可拷贝）、Serializable（可序列化）。
+
+### 2.2 类的属性 ###
+
+	public class ArrayList<E> extends AbstractList<E>
+	        implements List<E>, RandomAccess, Cloneable, java.io.Serializable
+	{
+	    // 版本号
+	    private static final long serialVersionUID = 8683452581122892189L;
+	    // 缺省容量
+	    private static final int DEFAULT_CAPACITY = 10;
+	    // 空对象数组
+	    private static final Object[] EMPTY_ELEMENTDATA = {};
+	    // 缺省空对象数组
+	    private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
+	    // 元素数组
+	    transient Object[] elementData;
+	    // 实际元素大小，默认为0
+	    private int size;
+	    // 最大数组容量
+	    private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+	}
+
+说明：类的属性中核心的属性为elementData，类型为Object[]，用于存放实际元素，并且被标记为transient，也就意味着在序列化的时候，此字段是不会被序列化的。
+
+### 2.3 类的构造函数 ###
+
+#### ArrayList(int)型构造函数 ####
+
+	public ArrayList(int initialCapacity) {
+        if (initialCapacity > 0) { // 初始容量大于0
+            this.elementData = new Object[initialCapacity]; // 初始化元素数组
+        } else if (initialCapacity == 0) { // 初始容量为0
+            this.elementData = EMPTY_ELEMENTDATA; // 为空对象数组
+        } else { // 初始容量小于0，抛出异常
+            throw new IllegalArgumentException("Illegal Capacity: "+
+                                               initialCapacity);
+        }
+    }
+
+说明：指定elementData数组的大小，不允许初始化大小小于0，否则抛出异常。
+
+#### ArrayList()型构造函数 ####
+
+	public ArrayList() { 
+        // 无参构造函数，设置元素数组为空 
+        this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
+    }
+
+说明：当未指定初始化大小时，会给elementData赋值为空集合。
+
+#### ArrayList(Collection<? extends E>)型构造函数 ####　
+
+	public ArrayList(Collection<? extends E> c) { // 集合参数构造函数
+        elementData = c.toArray(); // 转化为数组
+        if ((size = elementData.length) != 0) { // 参数为非空集合
+            if (elementData.getClass() != Object[].class) // 是否成功转化为Object类型数组
+                elementData = Arrays.copyOf(elementData, size, Object[].class); // 不为Object数组的话就进行复制
+        } else { // 集合大小为空，则设置元素数组为空
+            this.elementData = EMPTY_ELEMENTDATA;
+        }
+    }
+
+说明：当传递的参数为集合类型时，会把集合类型转化为数组类型，并赋值给elementData。
+
+### 2.4 核心函数分析 ###
+
+#### add函数 ####
+
+ 	public boolean add(E e) { // 添加元素
+        ensureCapacityInternal(size + 1);  // Increments modCount!!
+        elementData[size++] = e;
+        return true;
+    }
+
+说明：在add函数我们发现还有其他的函数ensureCapacityInternal，此函数可以理解为确保elementData数组有合适的大小。ensureCapacityInternal的具体函数如下
+
+	private void ensureCapacityInternal(int minCapacity) {
+        if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) { // 判断元素数组是否为空数组
+            minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity); // 取较大值
+        }
+       
+        ensureExplicitCapacity(minCapacity);
+    }
+
+说明：在ensureCapacityInternal函数中我们又发现了ensureExplicitCapacity函数，这个函数也是为了确保elemenData数组有合适的大小。ensureExplicitCapacity的具体函数如下
+
+	private void ensureExplicitCapacity(int minCapacity) {
+        // 结构性修改加1
+        modCount++;
+        if (minCapacity - elementData.length > 0)
+            grow(minCapacity);
+    }
+
+说明：在ensureExplicitCapacity函数我们又发现了grow函数，grow函数才会对数组进行扩容，ensureCapacityInternal、ensureExplicitCapacity都只是过程，最后完成实际扩容操作还是得看grow函数，grow函数的具体函数如下　
+
+    private void grow(int minCapacity) {
+        int oldCapacity = elementData.length; // 旧容量
+        int newCapacity = oldCapacity + (oldCapacity >> 1); // 新容量为旧容量的1.5倍
+        if (newCapacity - minCapacity < 0) // 新容量小于参数指定容量，修改新容量
+            newCapacity = minCapacity;
+        if (newCapacity - MAX_ARRAY_SIZE > 0) // 新容量大于最大容量
+            newCapacity = hugeCapacity(minCapacity); // 指定新容量
+        // 拷贝扩容
+        elementData = Arrays.copyOf(elementData, newCapacity);
+    }
+
+说明：正常情况下会扩容1.5倍，特殊情况下（新扩展数组大小已经达到了最大值）则只取最大值。
