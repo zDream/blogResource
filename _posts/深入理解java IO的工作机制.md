@@ -19,11 +19,14 @@ java 的io操作类在java.io包下,大概有将近80个类，可大概分为如
 
 InputStream子类
 
-	AudioInputStream ， ByteArrayInputStream ， FileInputStream ， FilterInputStream ， InputStream ， ObjectInputStream ， PipedInputStream ， SequenceInputStream ， StringBufferInputStream
+	AudioInputStream ， ByteArrayInputStream ， FileInputStream ，  
+	FilterInputStream ， InputStream ， ObjectInputStream ，   
+	PipedInputStream ， SequenceInputStream ， StringBufferInputStream
 
 OutputStream子类
  
-	ByteArrayOutputStream ， FileOutputStream ， FilterOutputStream ， ObjectOutputStream ， OutputStream ， PipedOutputStream 
+	ByteArrayOutputStream ， FileOutputStream ， FilterOutputStream ，
+	ObjectOutputStream ， OutputStream ， PipedOutputStream 
 
 ### 1.2 基于字符的操作接口 ###
 
@@ -33,11 +36,13 @@ OutputStream子类
 
 Writer
 
-	BufferedWriter ， CharArrayWriter ， FilterWriter ， OutputStreamWriter ， PipedWriter ， PrintWriter ， StringWriter 
+	BufferedWriter ， CharArrayWriter ， FilterWriter ， OutputStreamWriter ，
+	PipedWriter ， PrintWriter ， StringWriter 
 
 Reader
 
-	BufferedReader ， CharArrayReader ， FilterReader ， InputStreamReader ， PipedReader ， StringReader 
+	BufferedReader ， CharArrayReader ， FilterReader ， InputStreamReader ，
+	PipedReader ， StringReader 
 
 ### 1.3 字节和字符的转化接口 ###
 
